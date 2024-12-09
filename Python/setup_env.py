@@ -4,26 +4,19 @@ import sys
 import winreg
 
 
-def set_python_environment():
-    """动态修改环境变量 PATH，添加 Python 目录及其相关目录"""
-    python_dir = os.path.dirname(sys.executable)  # 获取 Python 的目录
-    scripts_dir = os.path.join(python_dir, "Scripts")  # Python 的 Scripts 目录
-    launcher_dir = os.path.join(os.path.dirname(python_dir), "Launcher")  # 上一级的 Launcher 目录
-
-    current_path = os.environ.get('PATH', '')
-
-    # 添加路径到动态 PATH 环境变量
-    for path in [python_dir, scripts_dir, launcher_dir]:
-        if path and path not in current_path:
-            current_path = f"{path};{current_path}"
-    os.environ['PATH'] = current_path
-    print("动态 PATH 环境变量更新成功")
+def get_user_path():
+    """从注册表获取用户级 PATH"""
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Environment") as key:
+            return winreg.QueryValueEx(key, "Path")[0]
+    except FileNotFoundError:
+        return ""
 
 
 def add_to_user_path(new_paths):
-    """使用 setx 添加多个路径到用户级环境变量"""
+    """添加路径到用户级 PATH"""
     try:
-        current_path = os.environ.get("PATH", "")
+        current_path = get_user_path()
         paths_to_add = [path for path in new_paths if path not in current_path]
 
         if not paths_to_add:
@@ -34,39 +27,66 @@ def add_to_user_path(new_paths):
         if len(new_path_value) > 1024:
             print(f"新 PATH 长度超过限制：{len(new_path_value)} 字符")
             return
-        subprocess.run(['setx', 'PATH', new_path_value], shell=True, check=True)
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Environment", 0, winreg.KEY_SET_VALUE) as key:
+            winreg.SetValueEx(key, "Path", 0, winreg.REG_EXPAND_SZ, new_path_value)
         print("以下路径已成功添加到用户级 PATH：")
         for path in paths_to_add:
             print(f"  - {path}")
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         print(f"修改用户级 PATH 失败：{e}")
 
 
-def add_to_system_path(new_paths):
-    """使用注册表添加多个路径到系统级环境变量"""
-    key = r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
+def get_system_path():
+    """从注册表获取系统级 PATH"""
     try:
-        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key, 0, winreg.KEY_SET_VALUE) as reg_key:
-            current_path, reg_type = winreg.QueryValueEx(reg_key, "Path")
-            paths_to_add = [path for path in new_paths if path not in current_path]
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment") as key:
+            return winreg.QueryValueEx(key, "Path")[0]
+    except FileNotFoundError:
+        return ""
 
-            if not paths_to_add:
-                print("所有路径已存在于系统级 PATH 中")
-                return
 
-            new_path_value = f"{current_path};" + ";".join(paths_to_add)
-            if len(new_path_value) > 2048:
-                print("新的 PATH 值长度超过了注册表允许的最大长度")
-                return
+def add_to_system_path(new_paths):
+    """添加路径到系统级 PATH"""
+    try:
+        current_path = get_system_path()
+        paths_to_add = [path for path in new_paths if path not in current_path]
 
-            winreg.SetValueEx(reg_key, "Path", 0, winreg.REG_EXPAND_SZ, new_path_value)
-            print("以下路径已成功添加到系统级 PATH：")
-            for path in paths_to_add:
-                print(f"  - {path}")
+        if not paths_to_add:
+            print("所有路径已存在于系统级 PATH 中")
+            return
+
+        new_path_value = f"{current_path};" + ";".join(paths_to_add)
+        if len(new_path_value) > 2048:
+            print("新的 PATH 值长度超过了注册表允许的最大长度")
+            return
+
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", 0, winreg.KEY_SET_VALUE) as key:
+            winreg.SetValueEx(key, "Path", 0, winreg.REG_EXPAND_SZ, new_path_value)
+        print("以下路径已成功添加到系统级 PATH：")
+        for path in paths_to_add:
+            print(f"  - {path}")
     except PermissionError:
         print("需要管理员权限来修改系统级环境变量")
     except Exception as e:
         print(f"修改系统级 PATH 失败：{e}")
+
+
+def set_python_environment():
+    """动态修改当前进程的 PATH 环境变量"""
+    python_dir = os.path.dirname(sys.executable)
+    scripts_dir = os.path.join(python_dir, "Scripts")
+    # launcher_dir = os.path.join(os.path.dirname(python_dir), "Launcher")
+    # launcher路径不一定在这个目录下
+
+    paths_to_add = [python_dir, scripts_dir, launcher_dir]
+    current_path = os.environ.get('PATH', '')
+
+    for path in paths_to_add:
+        if path and path not in current_path:
+            current_path = f"{path};{current_path}"
+    os.environ['PATH'] = current_path
+    print("动态 PATH 环境变量更新成功")
 
 
 def change_pip_source():
@@ -93,9 +113,10 @@ def install_packages():
 if __name__ == "__main__":
     python_dir = os.path.dirname(sys.executable)
     scripts_dir = os.path.join(python_dir, "Scripts")
-    launcher_dir = os.path.join(os.path.dirname(python_dir), "Launcher")
+    # launcher_dir = os.path.join(os.path.dirname(python_dir), "Launcher")
+    # launcher路径不一定在这个目录下
 
-    paths_to_add = [python_dir, scripts_dir, launcher_dir]
+    paths_to_add = [python_dir, scripts_dir]
 
     while True:
         choice = input("是否将 Python 目录及相关目录添加到全局 PATH？\n1. 添加到用户级 PATH\n2. 添加到系统级 PATH (需要管理员权限)\n3. 动态修改环境变量\n4. 跳过\n请选择 (1/2/3/4): ")
