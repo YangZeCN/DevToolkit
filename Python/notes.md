@@ -83,3 +83,52 @@
 如果你只添加了 Python 安装目录（`C:\Python39\`），也能自动找到 `pip` 等工具，因为 `Scripts` 目录是安装目录的子目录。
 
 此外，**User Variable 和 System Variable** 使你可以选择是否为当前用户或所有用户设置环境变量，通常添加到 **User Variable** 就足够了。
+
+
+---
+
+`os.environ.get("PATH", "")` 获取的是当前 **运行环境的动态 PATH 变量**，它是用户级和系统级环境变量的合并结果。
+
+---
+
+### **具体说明**
+1. **动态 PATH 的来源**：
+   - 当你启动一个新的终端（如命令提示符或 PowerShell）时，系统会根据用户级和系统级 PATH 环境变量的值构建当前进程的动态 PATH。
+   - `os.environ["PATH"]` 访问的就是该进程的动态 PATH，它可以包含用户级和系统级 PATH 的内容。
+
+2. **区别**：
+   - **系统环境变量**：适用于所有用户，在注册表路径 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment` 下定义。
+   - **用户环境变量**：只适用于当前用户，在注册表路径 `HKEY_CURRENT_USER\Environment` 下定义。
+   - **动态环境变量**：进程启动时由系统和用户环境变量合并生成，进程内独立管理，修改不会影响系统和用户级环境变量。
+
+3. **脚本中 `current_path` 的作用**：
+   - 它只是获取当前运行进程的 `PATH`，用于检查或拼接路径。
+   - 修改后（例如通过 `os.environ["PATH"] = ...`），只会影响当前脚本运行期间的动态环境，不会永久影响用户级或系统级环境变量。
+
+---
+
+### **如果要区分用户级和系统级的 PATH**：
+你需要显式地访问注册表中的 `Path` 值：
+
+- **用户级 PATH**：
+  ```python
+  import winreg
+  with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Environment") as key:
+      user_path, _ = winreg.QueryValueEx(key, "Path")
+  print("用户级 PATH:", user_path)
+  ```
+
+- **系统级 PATH**：
+  ```python
+  with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment") as key:
+      system_path, _ = winreg.QueryValueEx(key, "Path")
+  print("系统级 PATH:", system_path)
+  ```
+
+通过这种方式，你可以分别获取和修改用户级和系统级 PATH，而不是仅依赖动态 PATH。
+
+---
+
+### **总结**
+- `os.environ["PATH"]` 访问的是动态 PATH，包含用户级和系统级的合并内容。
+- 如果需要明确修改用户级或系统级 PATH，必须使用注册表操作。
