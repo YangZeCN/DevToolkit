@@ -100,7 +100,7 @@ def change_pip_source():
 
 def install_packages():
     """批量安装常用库"""
-    packages = ['numpy', 'scipy', 'matplotlib', 'pandas', 'seaborn', 'markdown']
+    packages = ['numpy', 'scipy', 'matplotlib', 'pandas', 'seaborn', 'markdown', 'beautifulsoup4']
     for i, package in enumerate(packages, start=1):
         print(f"[{i}/{len(packages)}] 正在安装 {package}...")
         try:
