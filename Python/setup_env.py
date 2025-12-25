@@ -89,7 +89,7 @@ def add_to_system_path(new_paths):
         print(f"修改系统级 PATH 失败：{e}")
 
 def set_python_environment():
-    """动态修改当前进程的 PATH 环境变量"""
+    """临时修改当前进程的 PATH 环境变量"""
     python_dir = os.path.dirname(sys.executable)
     scripts_dir = os.path.join(python_dir, "Scripts")
     # 如果需要添加 launcher 目录，可在此处定义 launcher_dir
@@ -107,7 +107,7 @@ def set_python_environment():
             # 同时更新 current_paths 列表
             current_paths.insert(0, normalize_path(path))
     os.environ['PATH'] = current_path
-    print("动态 PATH 环境变量更新成功")
+    print("临时 PATH 环境变量更新成功")
 
 def change_pip_source_custom(source_url=None):
     """更换 pip 源"""
@@ -146,7 +146,7 @@ if __name__ == "__main__":
             "是否将 Python 目录及相关目录添加到全局 PATH？\n"
             "1. 添加到用户级 PATH\n"
             "2. 添加到系统级 PATH (需要管理员权限)\n"
-            "3. 动态修改环境变量\n"
+            "3. 临时修改（仅当前进程）\n"
             "4. 跳过\n"
             "请选择 (1/2/3/4): "
         )
