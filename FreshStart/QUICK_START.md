@@ -11,6 +11,7 @@ Download these files and place them in the same folder as the scripts:
 - [ ] **Git-x64.exe** - https://git-scm.com/download/win
 - [ ] **TortoiseGit-x64.msi** - https://tortoisegit.org/download/
 - [ ] **python-3.12.x-amd64.exe** - https://www.python.org/downloads/
+- [ ] **Everything-x64.exe** - https://www.voidtools.com/downloads/
 - [ ] **MobaXterm-Installer.msi** (optional) - https://mobaxterm.mobatek.net/download.html
 
 ### Step 2: Run the Installation
@@ -45,6 +46,7 @@ The script will:
 - ✅ Install TortoiseGit
 - ✅ Install Python to **C:\Python\Python314**
 - ✅ Run **setup_env.py** to configure Python environment and install packages
+- ✅ Install Everything (fast file search)
 - ✅ Install MobaXterm (optional)
 
 ### Step 4: Restart Computer

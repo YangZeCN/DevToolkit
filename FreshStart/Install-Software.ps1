@@ -716,6 +716,39 @@ function Install-MobaXterm {
     }
 }
 
+function Install-Everything {
+    <#
+    .SYNOPSIS
+        Install Everything - Fast file search utility
+    #>
+    param([string]$InstallerPath)
+    
+    Write-InstallLog "Installing Everything..." -Level Info
+    
+    # Check if already installed
+    $checkPaths = @(
+        "${env:ProgramFiles}\Everything\Everything.exe",
+        "${env:ProgramFiles(x86)}\Everything\Everything.exe"
+    )
+    
+    if (Test-SoftwareInstalled -SoftwareName "Everything" -CheckPaths $checkPaths) {
+        return $true
+    }
+    
+    if (-not $InstallerPath -or -not (Test-Path $InstallerPath)) {
+        Write-InstallLog "Everything installer not found" -Level Error
+        Write-InstallLog "Download from: https://www.voidtools.com/downloads/" -Level Info
+        return $false
+    }
+    
+    # Everything installer uses /S for silent installation (NSIS installer)
+    $arguments = @(
+        "/S"  # Silent install
+    )
+    
+    return Invoke-InstallerSilent -InstallerPath $InstallerPath -Arguments $arguments
+}
+
 #endregion
 
 #region Main Installation Process
@@ -770,7 +803,12 @@ function Start-SoftwareInstallation {
         Install-Python -InstallerPath $InstallerConfig['python']
     }
     
-    # Step 6: Install MobaXterm (optional)
+    # Step 6: Install Everything (fast file search)
+    if ($InstallerConfig.ContainsKey('everything')) {
+        Install-Everything -InstallerPath $InstallerConfig['everything']
+    }
+    
+    # Step 7: Install MobaXterm (optional)
     if ($InstallerConfig.ContainsKey('mobaxterm')) {
         Install-MobaXterm -InstallerPath $InstallerConfig['mobaxterm']
     }
@@ -900,6 +938,26 @@ function Main {
             $confirm = Read-Host "Install Python? (y/n)"
             if ($confirm -eq 'y') {
                 $installerConfig['python'] = $pythonInstaller.FullName
+            }
+        }
+    }
+    
+    # Everything
+    $everythingPath = Read-Host "Everything installer path (Enter/skip/path)"
+    if ($everythingPath -eq 'skip' -or $everythingPath -eq 's') {
+        Write-Host "Skipped: Everything" -ForegroundColor Yellow
+    }
+    elseif ($everythingPath -and (Test-Path $everythingPath)) {
+        $installerConfig['everything'] = $everythingPath
+    }
+    elseif (-not $everythingPath) {
+        # Try to find Everything installer in the directory
+        $everythingInstaller = Get-ChildItem -Path $scriptDir -Filter "Everything*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($everythingInstaller) {
+            Write-Host "Found: $($everythingInstaller.FullName)" -ForegroundColor Green
+            $confirm = Read-Host "Install Everything? (y/n)"
+            if ($confirm -eq 'y') {
+                $installerConfig['everything'] = $everythingInstaller.FullName
             }
         }
     }

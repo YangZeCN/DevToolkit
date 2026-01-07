@@ -13,7 +13,7 @@
 ## Features
 
 - ✅ **Zero dependencies** - runs on any Windows system out of the box
-- ✅ **Automated installation** of VSCode, Git, TortoiseGit, Python, and MobaXterm
+- ✅ **Automated installation** of VSCode, Git, TortoiseGit, Python, Everything, and MobaXterm
 - ✅ **VSCode as Git editor** - automatically configures during installation
 - ✅ **Smart dependency checking** - installs VC++ Redistributable if needed
 - ✅ **Python custom installation** - installs to C:\Python\Python314 with automatic PATH configuration
@@ -32,7 +32,8 @@
 4. **TortoiseGit** (requires VC++ Redistributable)
 5. **Python** (installed to C:\Python\Python314, added to System PATH)
 6. **setup_env.py** (automatically runs after Python to configure environment and install packages)
-7. **MobaXterm** (optional)
+7. **Everything** (fast file search utility)
+8. **MobaXterm** (optional)
 
 ## Quick Start
 
@@ -73,6 +74,7 @@ Download and place these in the same directory as the script:
 | Git | `Git-x64.exe` | https://git-scm.com/download/win |
 | TortoiseGit | `TortoiseGit-x64.msi` | https://tortoisegit.org/download/ |
 | Python | `python-3.x.x-amd64.exe` | https://www.python.org/downloads/ |
+| Everything | `Everything-x64.exe` | https://www.voidtools.com/downloads/ |
 | MobaXterm (optional) | `MobaXterm-Installer.msi` | https://mobaxterm.mobatek.net/download.html |
 
 ## Execution Policy
