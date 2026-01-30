@@ -28,6 +28,7 @@
 |---------|------|---------|---------|------|
 | **[FreshStart](FreshStart/)** | PowerShell 脚本 | Windows 全新机器/重装系统后快速部署开发环境 | 自动化安装 VSCode、Git、TortoiseGit、Python、Everything 等开发工具，并完成初始配置 | [README](FreshStart/README.md) · [快速开始](FreshStart/QUICK_START.md) |
 | **[PyEnvSetup](PyEnvSetup/)** | Python 脚本 | Python 安装后的环境配置与优化 | PATH 管理（用户级/系统级/临时）、pip 源切换（国内镜像）、常用库批量安装 | [README](PyEnvSetup/README.md) |
+| **[PromptComposer](PromptComposer/)** | Python GUI | AI 对话场景的提示词管理与生成 | 结构化提示词编辑（角色/背景/任务/示例/约束/用户输入）、模板管理、实时预览、一键复制 | [README](PromptComposer/README.md) · [快速开始](PromptComposer/QUICK_START.md) |
 
 ---
 
@@ -37,6 +38,7 @@
 
 - **快速配置新 Windows 开发机** → [FreshStart 快速开始](FreshStart/QUICK_START.md)
 - **仅配置 Python 环境** → [PyEnvSetup 工具说明](PyEnvSetup/README.md)
+- **管理 AI 提示词模板** → [PromptComposer 快速开始](PromptComposer/QUICK_START.md)
 - **了解 PowerShell 自动化细节** → [FreshStart 完整指南](FreshStart/README_POWERSHELL.md)
 - **查看安装后的验证方法** → [Check-Python 脚本](FreshStart/Check-Python.ps1)
 
@@ -62,6 +64,15 @@
 - ✅ **镜像源切换**：默认清华镜像，支持自定义，提升国内下载速度
 - ✅ **批量装包**：自动安装 numpy、pandas、matplotlib 等科学计算栈
 - ✅ **进度反馈**：逐个包显示安装进度与结果
+
+### PromptComposer — AI 提示词生成工具
+
+- ✅ **结构化编辑**：6 个标准字段（角色/背景/任务/示例/约束/用户输入），全中文界面
+- ✅ **实时预览**：失焦自动刷新 Markdown 格式，所见即所得
+- ✅ **模板管理**：保存/加载自定义模板，快速切换不同场景
+- ✅ **一键复制**：生成的提示词直接复制到剪贴板
+- ✅ **单文件架构**：仅依赖 Python 标准库（tkinter），无需额外安装
+- ✅ **可打包分发**：支持打包成独立 .exe 文件，无需 Python 环境
 
 ---
 
@@ -95,6 +106,23 @@ python setup_env.py
 ```
 
 详见：[PyEnvSetup 工具说明](PyEnvSetup/README.md)
+
+### 场景 3：管理 AI 提示词模板
+
+```powershell
+# 运行 PromptComposer（脚本或 exe）
+python PromptComposer/prompt_composer.py
+# 或双击 PromptComposer.exe
+
+# 使用流程：
+# 1. 从模板下拉菜单选择场景（如"代码审查助手"）
+# 2. 在左侧输入框填写/修改内容
+# 3. 右侧自动预览生成的 Markdown 格式提示词
+# 4. 点击"复制到剪贴板"粘贴到 ChatGPT/Claude 等
+# 5. 保存为新模板以便后续复用
+```
+
+详见：[PromptComposer 快速开始](PromptComposer/QUICK_START.md)
 
 ---
 
@@ -140,10 +168,18 @@ DevToolkit/
 │   ├── Install-Software.bat     # 批处理入口
 │   ├── Check-Python.ps1         # Python 安装验证脚本
 │   └── setup_env.py             # Python 环境配置脚本
-└── PyEnvSetup/                  # Python 环境配置工具
-    ├── README.md                # PyEnvSetup 工具说明
-    ├── setup_env.py             # 独立的 Python 环境配置脚本
-    └── notes.md                 # 相关笔记
+├── PyEnvSetup/                  # Python 环境配置工具
+│   ├── README.md                # PyEnvSetup 工具说明
+│   ├── setup_env.py             # 独立的 Python 环境配置脚本
+│   └── notes.md                 # 相关笔记
+└── PromptComposer/              # AI 提示词生成工具
+    ├── README.md                # 功能说明与使用文档
+    ├── QUICK_START.md           # 5 分钟快速上手指南
+    ├── prompt_composer.py       # 主程序（单文件，仅依赖标准库）
+    ├── templates/               # 模板文件夹
+    │   └── demo.md              # 内置示例模板（代码审查助手）
+    └── dist/                    # 打包后的 exe（可选）
+        └── PromptComposer.exe   # 独立可执行文件
 ```
 
 ---
@@ -184,8 +220,8 @@ DevToolkit/
 
 ---
 
-**快速链接**：[FreshStart 快速开始](FreshStart/QUICK_START.md) · [PyEnvSetup 工具](PyEnvSetup/README.md) · [问题反馈](../../issues)
+**快速链接**：[FreshStart 快速开始](FreshStart/QUICK_START.md) · [PyEnvSetup 工具](PyEnvSetup/README.md) · [PromptComposer 工具](PromptComposer/README.md) · [问题反馈](../../issues)
 
 ---
 
-*Last Updated: 2026-01-28 | Generated with ❤️ and AI*
+*Last Updated: 2026-01-31 | Generated with ❤️ and AI*
