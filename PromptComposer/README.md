@@ -32,9 +32,9 @@
 
 ### 方式一：直接运行 exe （推荐）
 
-如果已有打包好的 `PromptComposer.exe`，双击即可运行。
+从 [GitHub Releases](https://github.com/YangZeCN/DevToolkit/releases) 下载最新版本的 `PromptComposer.exe`，双击即可运行。
 
-> ⚠️ 确保 `templates` 文件夹与 `.exe` 在同一目录下
+> ✨ **数据持久化**：用户保存的模板存储在 exe 同目录下的 `templates\` 文件夹中，方便备份和管理
 
 ### 方式二：直接运行 Python 脚本
 
@@ -46,41 +46,24 @@ python --version
 python prompt_composer.py
 ```
 
-### 方式二：打包成独立 .exe
+### 方式三：打包成独立 .exe
 
-#### 1. 安装 PyInstaller
+详细打包说明请查看 [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md)
+
+#### 快速打包
 
 ```powershell
+# 1. 安装打包工具
 pip install pyinstaller
+
+# 2. 使用配置文件打包
+pyinstaller prompt_composer.spec --clean
 ```
 
-#### 2. 打包命令
-
-```powershell
-pyinstaller --onefile --noconsole --name="PromptComposer" prompt_composer.py
-```
-
-**参数说明：**
-- `--onefile`：打包成单个 .exe 文件
-- `--noconsole`：运行时不显示黑色控制台窗口
-- `--name`：自定义生成的 .exe 文件名（PromptComposer）
-
-#### 3. 部署步骤
-
-⚠️ **重要提示**：打包完成后，必须手动执行以下步骤：
-
-1. 在 `dist/` 文件夹中找到生成的 `PromptComposer.exe`
-2. 将程序源码目录下的 `templates` 文件夹**完整复制**到 `.exe` 文件旁边
-3. 最终目录结构应为：
-
-```
-your_deploy_folder/
-├── PromptComposer.exe
-└── templates/
-    └── demo.md
-```
-
-如果缺少 `templates` 文件夹，程序会自动创建并生成示例模板，但**已有的自定义模板将丢失**。
+#### 输出位置
+- 可执行文件：`dist/PromptComposer.exe`
+- 首次运行自动创建 `templates/` 文件夹和示例模板
+- 用户模板保存在 exe 同目录下的 `templates/` 文件夹
 
 ---
 

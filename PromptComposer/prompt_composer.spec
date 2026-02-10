@@ -6,7 +6,7 @@ a = Analysis(
     ['prompt_composer.py'],
     pathex=[],
     binaries=[],
-    datas=[('templates', 'templates')],  # 包含模板文件夹
+    datas=[],  # 不打包模板文件夹，首次运行时自动在exe同目录创建
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

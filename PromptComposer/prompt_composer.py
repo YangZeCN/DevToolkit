@@ -7,6 +7,7 @@
 
 import os
 import re
+import sys
 import glob
 from tkinter import Tk, Frame, Label, Entry, Text, Button, messagebox, simpledialog, Scrollbar
 from tkinter.ttk import Combobox, PanedWindow
@@ -21,8 +22,15 @@ class PromptComposer:
         self.root.title("PromptComposer")
         self.root.geometry("1000x700")
         
-        # 模板目录
-        self.templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        # 模板目录：始终使用程序所在目录
+        if getattr(sys, 'frozen', False):
+            # 打包后的 exe 环境：使用 exe 文件所在目录
+            exe_dir = os.path.dirname(sys.executable)
+            self.templates_dir = os.path.join(exe_dir, "templates")
+        else:
+            # 开发环境：使用脚本所在目录
+            self.templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        
         self._ensure_templates_folder()
         
         # 字段名中英文映射
